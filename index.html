@@ -299,6 +299,17 @@ img.original-welcome-logo{
   }
 }
 
+
+/* Reliable welcome-screen transition */
+#welcomeScreen{
+  transition: opacity .45s ease, visibility .45s ease;
+}
+#welcomeScreen.mobile-hide{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
 </style>
 </head>
 
@@ -338,7 +349,7 @@ img.original-welcome-logo{
       <a class="btn" href="https://maps.app.goo.gl/PZAFfjqmJjEdSubS9" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i><span>Our Location</span></a>
       <a class="btn" href="https://sbsilksarees.com/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i><span>Website</span></a>
       <a class="btn" href="https://www.instagram.com/sbsilksandsarees?utm_source=qr&igsi=MXR4Mnd6em85eTR3cQ%3D%3D" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram</span></a>
-      <a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=sbsilkssarees@gmail.com" target="_blank" rel="noopener"><i class="fa-solid fa-envelope"></i><span>Email Us</span></a>
+      <a class="btn" href="mailto:sbsilkssarees@gmail.com?subject=Enquiry%20from%20S.B.%20Silks%20%26%20Sarees"><i class="fa-solid fa-envelope"></i><span>Email Us</span></a>
     </div>
 
     <div class="footer">Thank you for supporting our tradition</div>
@@ -348,15 +359,6 @@ img.original-welcome-logo{
 
 
 
-<script>
-(function(){
-  var welcome=document.getElementById('welcomeScreen');
-  setTimeout(function(){
-    welcome.classList.add('hide');
-    setTimeout(function(){welcome.remove();},600);
-  },2000);
-})();
-</script>
 
 
 
@@ -367,27 +369,8 @@ img.original-welcome-logo{
 
 
 
-<script>
-(function(){
-  var welcome=document.getElementById('welcomeScreen');
-  if(!welcome) return;
 
-  var layer=document.createElement('div');
-  layer.className='premium-effects';
 
-  var vignette=document.createElement('div');
-  vignette.className='premium-vignette';
-  layer.appendChild(vignette);
-
-  var rays=document.createElement('div');
-  rays.className='premium-rays';
-  layer.appendChild(rays);
-document.body.appendChild(layer);
-
-  // Stop completely before the welcome screen moves to the main page.
-  setTimeout(function(){layer.remove();},1900);
-})();
-</script>
 
 
 <script>
@@ -416,6 +399,31 @@ document.body.appendChild(layer);
 
   // Remove completely when the 2-second welcome finishes.
   setTimeout(function(){layer.remove();},1950);
+})();
+</script>
+
+
+<script>
+(function(){
+  function moveToMainPage(){
+    var welcome = document.getElementById('welcomeScreen');
+    if(!welcome) return;
+
+    welcome.classList.add('mobile-hide');
+
+    setTimeout(function(){
+      welcome.style.display = 'none';
+      welcome.remove();
+    }, 500);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      setTimeout(moveToMainPage, 2000);
+    });
+  }else{
+    setTimeout(moveToMainPage, 2000);
+  }
 })();
 </script>
 
