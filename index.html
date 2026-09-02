@@ -381,6 +381,16 @@ img.original-welcome-logo{
   color:#D9B86B !important;
 }
 
+
+.action-btn{
+  font-family:inherit;
+  border:1px solid rgba(154,214,180,.28);
+  color:var(--text);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.action-btn:active{transform:scale(.98)}
+
 </style>
 </head>
 
@@ -421,8 +431,8 @@ img.original-welcome-logo{
       <a class="btn" href="https://www.instagram.com/sbsilksandsarees?utm_source=qr&igsi=MXR4Mnd6em85eTR3cQ%3D%3D" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram</span></a>
       <a class="btn" href="mailto:sbsilkssarees@gmail.com?subject=Enquiry%20from%20S.B.%20Silks%20%26%20Sarees"><i class="fa-solid fa-envelope"></i><span>Email Us</span></a>
     
-      <a class="btn" href="javascript:void(0)" onclick="sharePage(); return false;"><i class="fa-solid fa-share-nodes"></i><span>Share</span></a>
-      <a class="btn" id="saveContactBtn" href="javascript:void(0)" onclick="saveContact(); return false;"><i class="fa-solid fa-address-book"></i><span>Save Contact</span></a>
+      <button class="btn action-btn" id="shareBtn" type="button"><i class="fa-solid fa-share-nodes"></i><span>Share</span></button>
+      <button class="btn action-btn" id="saveContactBtn" type="button"><i class="fa-solid fa-address-book"></i><span>Save Contact</span></button>
 </div>
 <div class="footer">Thank you for supporting our tradition</div>
   </section>
@@ -500,59 +510,66 @@ img.original-welcome-logo{
 </script>
 
 
+
 <script>
-function sharePage(){
-  var pageUrl = window.location.href;
-  var shareData = {
-    title: 'S.B. Silks & Sarees',
-    text: 'Visit S.B. Silks & Sarees',
-    url: pageUrl
-  };
+(function(){
+  var shareBtn = document.getElementById('shareBtn');
+  var saveBtn = document.getElementById('saveContactBtn');
 
-  if (navigator.share) {
-    navigator.share(shareData).catch(function(err){
-      if (err && err.name !== 'AbortError') fallbackShare(pageUrl);
+  if (shareBtn) {
+    shareBtn.addEventListener('click', function(){
+      var url = window.location.href;
+      var data = {
+        title: 'S.B. Silks & Sarees',
+        text: 'Visit S.B. Silks & Sarees',
+        url: url
+      };
+
+      if (navigator.share) {
+        navigator.share(data).catch(function(err){
+          if (err && err.name !== 'AbortError') {
+            window.location.href = 'https://wa.me/?text=' +
+              encodeURIComponent('Visit S.B. Silks & Sarees: ' + url);
+          }
+        });
+      } else {
+        window.location.href = 'https://wa.me/?text=' +
+          encodeURIComponent('Visit S.B. Silks & Sarees: ' + url);
+      }
     });
-  } else {
-    fallbackShare(pageUrl);
   }
-}
 
-function fallbackShare(pageUrl){
-  var message = 'Visit S.B. Silks & Sarees: ' + pageUrl;
-  window.open('https://wa.me/?text=' + encodeURIComponent(message), '_blank');
-}
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function(){
+      var vcard = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'N:Silks & Sarees;S.B.;;;;',
+        'FN:S.B. Silks & Sarees',
+        'ORG:S.B. Silks & Sarees',
+        'TEL;TYPE=CELL:+918489989933',
+        'EMAIL;TYPE=INTERNET:sbsilkssarees@gmail.com',
+        'URL:https://sbsilksarees.com/',
+        'ADR;TYPE=WORK:;;#72/42 Main Road Karukkupet Kanchipuram;Tamil Nadu;;631601;India',
+        'END:VCARD'
+      ].join('\r\n');
 
-function saveContact(){
-  var vcard = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    'FN:S.B. Silks & Sarees',
-    'N:S.B. Silks & Sarees;;;;',
-    'ORG:S.B. Silks & Sarees',
-    'TEL;TYPE=CELL:+918489989933',
-    'EMAIL;TYPE=INTERNET:sbsilkssarees@gmail.com',
-    'URL:https://sbsilksarees.com/',
-    'ADR;TYPE=WORK:;;#72/42 Main Road Karukkupet Kanchipuram;Tamil Nadu;;631 601;India',
-    'END:VCARD'
-  ].join('
-');
+      var blob = new Blob([vcard], {type:'text/vcard;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'SB_Silks_Sarees.vcf';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
 
-  var blob = new Blob([vcard], {type:'text/vcard'});
-  var fileURL = URL.createObjectURL(blob);
-
-  var a = document.createElement('a');
-  a.href = fileURL;
-  a.download = 'SB_Silks_Sarees.vcf';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-
-  setTimeout(function(){
-    document.body.removeChild(a);
-    URL.revokeObjectURL(fileURL);
-  }, 3000);
-}
+      setTimeout(function(){
+        URL.revokeObjectURL(url);
+        link.remove();
+      }, 5000);
+    });
+  }
+})();
 </script>
 
 </body>
